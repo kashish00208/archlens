@@ -69,7 +69,7 @@ await cognee.forget(dataset="deprecated_v1_billing_legacy")
 ### Installation
  1. **Clone the repository:**
    ```bash
-   git clone [https://github.com/your-username/archlens.git](https://github.com/your-username/archlens.git)
+   git clone [https://github.com/your-username/archlens.git](https://github.com/kashish00208/archlens.git)
    cd archlens
    
    ```
