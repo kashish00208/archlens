@@ -58,7 +58,7 @@ await cognee.forget(dataset="deprecated_v1_billing_legacy")
 ```
 ## 🛠️ Tech Stack
  * **Frontend:** Next.js, TypeScript, Tailwind CSS, React Flow (for graph visualization).
- * **Backend:** Node.js / Go worker pool for repository parsing and webhook handling.
+ * **Backend:** Node.js pool for repository parsing and webhook handling.
  * **AI Memory Layer:** Cognee (Self-hosted Docker Engine / Cloud Developer Plan).
  * **Deployment:** Docker, Vercel.
 ## 🏃‍♂️ Getting Started
