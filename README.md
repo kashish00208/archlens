@@ -1,88 +1,445 @@
 # 🔎 ArchLens
 
-> **The Continuous Architecture & Codebase Evolution Agent.** 
-> Built for the WeMakeDevs x Cognee Hackathon 2026. Powered by Cognee's hybrid graph-vector memory layer.
-
-Traditional RAG tools fail when analyzing complex software systems because code isn't just flat text—it is a deeply interconnected web of dependencies, structural relationships, and historical context. **ArchLens** uses Cognee to bridge this gap, giving AI agents a permanent, self-correcting structural memory of your entire software ecosystem. 
-
-ArchLens ingests repositories, PR histories, architectural RFCs, and API schemas, turning abstract codebases into an interactive, navigable, and deeply searchable **Knowledge Graph**.
+> **Your AI Software Architect Inside Slack**
+>
+> Ask architecture questions in Slack. Instantly understand dependencies, PRs, APIs, and system design across your repositories.
 
 ---
 
-## 🚀 Key Features
+# 🚀 Overview
 
-*   **Interactive Architecture Mapping:** Visually explore the actual memory nodes and edges constructed by Cognee inside a modern Next.js dashboard.
-*   **Cross-Session Impact Analysis:** Ask deep structural questions (e.g., *"If I migrate our auth gateway to Go, what downstream TypeScript services break?"*) across infinite developer sessions.
-*   **The Silent Reviewer:** Automatically runs during pull requests to catch structural drift against older architectural RFCs and guidelines.
+Modern codebases are spread across multiple repositories, services, APIs, and documentation. Developers often spend hours understanding architecture before writing a single line of code.
+
+**ArchLens** is a Slack AI Agent that acts as an intelligent software architect for your team.
+
+Instead of manually searching GitHub, reading documentation, or asking teammates, developers simply ask questions inside Slack.
+
+Examples:
+
+- What services depend on PaymentService?
+- Who should review this PR?
+- Will removing `/v1/auth` break anything?
+- Summarize the architectural changes in this PR.
+- Where is this endpoint used?
+
+ArchLens analyzes repositories, dependency graphs, API specifications, pull requests, and documentation to generate accurate answers.
 
 ---
 
-## 🧠 How We Use Cognee
+# 🎯 Problem
 
-ArchLens relies entirely on Cognee’s core memory lifecycle to ensure developer context is never lost, bloated, or stale:
+Engineering teams struggle with:
 
-```mermaid
-graph TD
-    A[Code, PRs, Swagger Docs] -->|1. remember| B(Cognee Hybrid Graph-Vector Store)
-    B -->|2. recall| C[Impact Analysis & Visual Map]
-    D[Senior PR Feedback & RFCs] -->|3. improve/memify| B
-    E[Deprecated Services] -->|4. forget| B
+- Hidden dependencies between services
+- Slow onboarding of new developers
+- Difficult impact analysis
+- Time-consuming PR reviews
+- Outdated documentation
+- Knowledge silos
 
-```
-### 1. remember() — Multi-Modal Code Ingestion
-ArchLens listens to GitHub repository webhooks and triggers data ingestion. It parses and stores files, openAPI schemas, and markdown documentation:
-```python
-await cognee.remember(file="user_service_api.yaml")
-await cognee.remember("UserService depends_on PostgresDB and triggers Events via RabbitMQ.")
+Understanding an unfamiliar codebase can take hours—or even days.
 
-```
-### 2. recall() — Deep Graph-Vector Traversal
-When a developer queries the system about system dependencies, Cognee routes the search between semantic meaning and deep graph relationships to trace precise code paths:
-```python
-# Traces entire dependency trees across historically separated repository context
-impact_report = await cognee.recall("What services consume the /v1/auth endpoint?")
+---
+
+# 💡 Solution
+
+ArchLens continuously analyzes your repositories and exposes an AI Software Architect directly inside Slack.
+
+Developers ask questions in natural language.
+
+The agent searches the codebase, traverses dependency graphs, analyzes Git history, and responds with contextual architectural insights.
 
 ```
-### 3. improve() / memify — Learning From Code Reviews
-When a developer updates architectural guidelines or approves a PR with crucial context, ArchLens runs improve() to update graph weights and relationship nodes based on the latest consensus:
-```python
-await cognee.remember("CRITICAL: Do not use direct DB connections in the Notification module.")
-await cognee.improve() # Re-weights the memory graph to prioritize this rule
+Developer
+     │
+     ▼
+ Slack AI Agent
+     │
+     ▼
+ Architecture Engine
+     │
+ ┌────────────────────────────────────┐
+ │ GitHub │ OpenAPI │ Docs │ Git Logs │
+ └────────────────────────────────────┘
+     │
+     ▼
+  AI Response
+```
+
+---
+
+# ✨ Features
+
+## 🔍 Dependency Analysis
+
+Find service relationships instantly.
+
+Example:
+
+> What services depend on PaymentService?
+
+Returns:
+
+- Direct dependencies
+- Indirect dependencies
+- Dependency graph
+- Impact level
+
+---
+
+## 💥 Impact Analysis
+
+Estimate breaking changes before modifying code.
+
+Example:
+
+> Will removing `/v1/auth` break anything?
+
+Returns:
+
+- Affected services
+- API consumers
+- Related repositories
+- Estimated impact
+- Risk level
+
+---
+
+## 👨‍💻 PR Review Assistant
+
+Automatically summarize pull requests.
+
+Example:
+
+> Summarize PR #284
+
+Returns:
+
+- Files changed
+- Services affected
+- API changes
+- Architectural changes
+- Breaking changes
+- Risk score
+
+---
+
+## 👥 Reviewer Recommendation
+
+Suggest the best reviewers based on repository history.
+
+Example:
+
+> Who should review this PR?
+
+Returns:
+
+- Recommended reviewers
+- Code ownership
+- Previous contributors
+- Similar PR history
+
+---
+
+## 🔎 Endpoint Discovery
+
+Locate every usage of an API endpoint.
+
+Example:
+
+> Where is `/v1/payment` used?
+
+Returns:
+
+- Backend services
+- Frontend applications
+- SDKs
+- Internal APIs
+
+---
+
+## 🏗 Architecture Q&A
+
+Ask questions about your system.
+
+Examples:
+
+- Explain the authentication flow.
+- Which services use Redis?
+- Show all microservices.
+- Which APIs are deprecated?
+- What databases does BillingService use?
+- How does NotificationService communicate with other services?
+
+---
+
+## 📊 Interactive Architecture Graph
+
+Generate an interactive dependency graph that can be opened from Slack.
+
+Visualize:
+
+- Services
+- APIs
+- Databases
+- Queues
+- External integrations
+
+---
+
+# 🤖 Slack Commands
 
 ```
-### 4. forget() — Pruning Technical Debt
-When microservices are deprecated or feature branches are deleted, ArchLens surgically removes old nodes to prevent the AI from generating obsolete recommendations:
-```python
-await cognee.forget(dataset="deprecated_v1_billing_legacy")
+/archlens dependency PaymentService
+
+/archlens impact /v1/auth
+
+/archlens summarize PR-284
+
+/archlens reviewers PR-284
+
+/archlens endpoint /v1/payment
+
+/archlens architecture authentication
+
+/archlens graph PaymentService
+```
+
+---
+
+# ⚙️ How It Works
+
+## 1. Repository Indexing
+
+ArchLens connects to GitHub and continuously indexes:
+
+- Source code
+- Pull Requests
+- OpenAPI specifications
+- README files
+- Architecture documentation
+- Package manifests
+
+---
+
+## 2. Dependency Extraction
+
+The parser detects:
+
+- Imports
+- API calls
+- Service-to-service communication
+- Database connections
+- Event queues
+- Package dependencies
+
+---
+
+## 3. Graph Construction
+
+Relationships are stored as a graph.
+
+Example:
 
 ```
-## 🛠️ Tech Stack
- * **Frontend:** Next.js, TypeScript, Tailwind CSS, React Flow (for graph visualization).
- * **Backend:** Node.js pool for repository parsing and webhook handling.
- * **AI Memory Layer:** Cognee (Self-hosted Docker Engine / Cloud Developer Plan).
- * **Deployment:** Docker, Vercel.
-## 🏃‍♂️ Getting Started
-### Prerequisites
- * Docker & Docker Compose
- * Node.js v18+
- * Cognee API Token or Local Instance
-### Installation
- 1. **Clone the repository:**
-   ```bash
-   git clone [https://github.com/your-username/archlens.git](https://github.com/kashish00208/archlens.git)
-   cd archlens
-   
-   ```
- 2. **Configure environment variables:**
-   Create a .env file in the root directory:
-   ```env
-   COGNEE_API_KEY=your_cognee_key_here
-   GITHUB_WEBHOOK_SECRET=your_secret
-   
-   ```
- 3. **Install dependencies and spin up the development environment:**
-   ```bash
-   npm install
-   npm run dev
-   
-   ```
+UserService
+      │
+      ├── PaymentService
+      │
+      ├── NotificationService
+      │
+      └── AuthService
+```
+
+---
+
+## 4. AI Analysis
+
+When a Slack message is received:
+
+1. Understand the question
+2. Search relevant repositories
+3. Traverse dependency graph
+4. Analyze Git history
+5. Generate an AI response
+
+---
+
+# 🏗 Architecture
+
+```
+                    GitHub Webhook
+                           │
+                           ▼
+                   Repository Parser
+                           │
+                           ▼
+                Dependency Extractor
+                           │
+                           ▼
+                   Graph Construction
+                           │
+                 ┌─────────┴─────────┐
+                 ▼                   ▼
+            Graph Database      Search Index
+                 │                   │
+                 └─────────┬─────────┘
+                           ▼
+                      MCP Server
+                           │
+                           ▼
+                     Slack AI Agent
+                           │
+                           ▼
+                    Developer in Slack
+```
+
+---
+
+# 🛠 Tech Stack
+
+## Frontend
+
+- Next.js
+- TypeScript
+- Tailwind CSS
+- React Flow
+
+## Backend
+
+- Node.js
+- Express
+- GitHub Webhooks
+
+## Slack
+
+- Slack Bolt SDK
+- Slack AI Capabilities
+
+## AI
+
+- OpenAI Responses API (or compatible LLM)
+
+## Search
+
+- Real-Time Search API
+
+## MCP
+
+Custom MCP Server exposing tools such as:
+
+- searchRepository()
+- findDependencies()
+- summarizePullRequest()
+- recommendReviewers()
+- endpointUsage()
+- architectureSearch()
+- listServices()
+
+## Storage
+
+- Neo4j
+- PostgreSQL
+- Redis
+
+---
+
+# 📂 Project Structure
+
+```
+archlens/
+
+apps/
+    dashboard/
+    slack-agent/
+
+packages/
+    parser/
+    graph/
+    ai/
+    github/
+    slack/
+    mcp-server/
+
+services/
+    webhook/
+    indexer/
+
+database/
+
+docs/
+```
+
+---
+
+# 📈 Example Conversation
+
+**Developer**
+
+> @ArchLens Will removing PaymentService break anything?
+
+**ArchLens**
+
+```
+Risk Level: High
+
+Affected Services
+• BillingService
+• NotificationService
+• OrderService
+
+Affected APIs
+• /v1/payment
+• /v1/refund
+
+Affected Files
+• paymentClient.ts
+• billing.ts
+• orderProcessor.ts
+
+Recommended Reviewers
+• Alice
+• Bob
+
+Estimated Impact
+17 files
+5 services
+2 APIs
+```
+
+---
+
+# 🚀 Roadmap
+
+## MVP
+
+- Slack AI Agent
+- GitHub Integration
+- Dependency Analysis
+- PR Summaries
+- Endpoint Search
+- Reviewer Recommendation
+
+## Phase 2
+
+- Interactive Architecture Graph
+- Multi-repository Support
+- Documentation Search
+- Service Ownership Detection
+
+## Phase 3
+
+- Architectural Drift Detection
+- AI-generated RFC Reviews
+- Architecture Health Score
+- Refactoring Suggestions
+
+---
+
+# 🌟 Why ArchLens?
+
+ArchLens isn't another code chatbot.
+
+It is an AI Software Architect that understands **how your entire system is connected**, helping developers answer architectural questions, review changes, estimate impact, and navigate large codebases—all without leaving Slack.
+
+By bringing architectural intelligence directly into everyday conversations, ArchLens reduces context switching, accelerates onboarding, and helps teams make safer engineering decisions.
