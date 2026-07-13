@@ -7,13 +7,20 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc --project tsconfig.json",
+    "start": "node dist/index.js"
   },
   "dependencies": {
+    "@slack/bolt": "^4.7.3",
     "better-auth": "^1.6.23",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
     "pg": "^8.22.0"
   },
   "devDependencies": {
-    "@types/pg": "^8.20.0"
+    "@types/pg": "^8.20.0",
+    "tsx": "^4.23.1",
+    "typescript": "^7.0.2"
   }
 }
