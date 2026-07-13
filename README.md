@@ -1,298 +1,169 @@
 # 🔎 ArchLens
 
-> **Your AI Software Architect Inside Slack**
+> **Your AI Software Architect in Slack**
 >
-> Ask architecture questions in Slack. Instantly understand dependencies, PRs, APIs, and system design across your repositories.
+> Ask questions about your architecture, dependencies, pull requests, APIs, and system design—all without leaving Slack.
 
 ---
 
-# 🚀 Overview
+## 🚀 What is ArchLens?
 
-Modern codebases are spread across multiple repositories, services, APIs, and documentation. Developers often spend hours understanding architecture before writing a single line of code.
+Modern software systems span dozens of repositories, microservices, APIs, and documentation. Understanding how everything connects often requires searching through code, reading docs, and asking teammates.
 
-**ArchLens** is a Slack AI Agent that acts as an intelligent software architect for your team.
+**ArchLens** is an AI-powered architecture assistant that continuously analyzes your codebase and answers architectural questions directly in Slack.
 
-Instead of manually searching GitHub, reading documentation, or asking teammates, developers simply ask questions inside Slack.
+Instead of searching manually, simply ask:
 
-Examples:
+> *"Will removing this API break anything?"*
 
-- What services depend on PaymentService?
-- Who should review this PR?
-- Will removing `/v1/auth` break anything?
-- Summarize the architectural changes in this PR.
-- Where is this endpoint used?
+or
 
-ArchLens analyzes repositories, dependency graphs, API specifications, pull requests, and documentation to generate accurate answers.
+> *"Who should review this PR?"*
 
----
-
-# 🎯 Problem
-
-Engineering teams struggle with:
-
-- Hidden dependencies between services
-- Slow onboarding of new developers
-- Difficult impact analysis
-- Time-consuming PR reviews
-- Outdated documentation
-- Knowledge silos
-
-Understanding an unfamiliar codebase can take hours—or even days.
-
----
-
-# 💡 Solution
-
-ArchLens continuously analyzes your repositories and exposes an AI Software Architect directly inside Slack.
-
-Developers ask questions in natural language.
-
-The agent searches the codebase, traverses dependency graphs, analyzes Git history, and responds with contextual architectural insights.
-
-```
-Developer
-     │
-     ▼
- Slack AI Agent
-     │
-     ▼
- Architecture Engine
-     │
- ┌────────────────────────────────────┐
- │ GitHub │ OpenAPI │ Docs │ Git Logs │
- └────────────────────────────────────┘
-     │
-     ▼
-  AI Response
-```
+ArchLens analyzes your repositories, dependency graph, API specifications, Git history, and documentation to provide contextual, architecture-aware answers.
 
 ---
 
 # ✨ Features
 
-## 🔍 Dependency Analysis
-
-Find service relationships instantly.
-
-Example:
-
-> What services depend on PaymentService?
-
-Returns:
-
-- Direct dependencies
-- Indirect dependencies
-- Dependency graph
-- Impact level
+- 🔍 Dependency Analysis
+- 💥 Impact Analysis
+- 👨‍💻 AI PR Summaries
+- 👥 Reviewer Recommendation
+- 🔎 Endpoint Discovery
+- 🏗 Architecture Q&A
+- 📊 Interactive Dependency Graph
 
 ---
 
-## 💥 Impact Analysis
-
-Estimate breaking changes before modifying code.
-
-Example:
-
-> Will removing `/v1/auth` break anything?
-
-Returns:
-
-- Affected services
-- API consumers
-- Related repositories
-- Estimated impact
-- Risk level
-
----
-
-## 👨‍💻 PR Review Assistant
-
-Automatically summarize pull requests.
-
-Example:
-
-> Summarize PR #284
-
-Returns:
-
-- Files changed
-- Services affected
-- API changes
-- Architectural changes
-- Breaking changes
-- Risk score
-
----
-
-## 👥 Reviewer Recommendation
-
-Suggest the best reviewers based on repository history.
-
-Example:
-
-> Who should review this PR?
-
-Returns:
-
-- Recommended reviewers
-- Code ownership
-- Previous contributors
-- Similar PR history
-
----
-
-## 🔎 Endpoint Discovery
-
-Locate every usage of an API endpoint.
-
-Example:
-
-> Where is `/v1/payment` used?
-
-Returns:
-
-- Backend services
-- Frontend applications
-- SDKs
-- Internal APIs
-
----
-
-## 🏗 Architecture Q&A
-
-Ask questions about your system.
-
-Examples:
-
-- Explain the authentication flow.
-- Which services use Redis?
-- Show all microservices.
-- Which APIs are deprecated?
-- What databases does BillingService use?
-- How does NotificationService communicate with other services?
-
----
-
-## 📊 Interactive Architecture Graph
-
-Generate an interactive dependency graph that can be opened from Slack.
-
-Visualize:
-
-- Services
-- APIs
-- Databases
-- Queues
-- External integrations
-
----
-
-# 🤖 Slack Commands
+# 💬 Example Questions
 
 ```
-/archlens dependency PaymentService
+What services depend on PaymentService?
 
-/archlens impact /v1/auth
+Will removing /v1/auth break anything?
 
-/archlens summarize PR-284
+Summarize PR #284
 
-/archlens reviewers PR-284
+Who should review this PR?
 
-/archlens endpoint /v1/payment
+Where is /v1/payment used?
 
-/archlens architecture authentication
+Explain the authentication flow.
 
-/archlens graph PaymentService
+Which services use Redis?
+
+Show all microservices.
+```
+
+---
+
+# ⚡ Example Response
+
+```
+Risk Level: High
+
+Affected Services
+• BillingService
+• NotificationService
+• OrderService
+
+Affected APIs
+• /v1/payment
+• /v1/refund
+
+Breaking Changes
+• 5 services impacted
+• 17 files affected
+
+Recommended Reviewers
+• Alice
+• Bob
+```
+
+---
+
+# 🏗 System Architecture
+
+```
+                GitHub
+                   │
+                   ▼
+        Repository Indexer
+                   │
+                   ▼
+        Dependency Parser
+                   │
+                   ▼
+          Knowledge Graph
+      (Neo4j + PostgreSQL)
+                   │
+                   ▼
+             MCP Server
+                   │
+                   ▼
+          OpenAI Responses API
+                   │
+                   ▼
+          Slack AI Assistant
+                   │
+                   ▼
+              Developer
 ```
 
 ---
 
 # ⚙️ How It Works
 
-## 1. Repository Indexing
+### 1. Repository Indexing
 
-ArchLens connects to GitHub and continuously indexes:
+ArchLens continuously indexes
 
 - Source code
 - Pull Requests
-- OpenAPI specifications
+- OpenAPI Specs
 - README files
-- Architecture documentation
-- Package manifests
+- Architecture Docs
+- Git History
 
 ---
 
-## 2. Dependency Extraction
+### 2. Dependency Extraction
 
-The parser detects:
+It automatically discovers
 
 - Imports
-- API calls
 - Service-to-service communication
-- Database connections
-- Event queues
+- API calls
+- Database usage
+- Queues
 - Package dependencies
 
 ---
 
-## 3. Graph Construction
+### 3. Knowledge Graph
 
-Relationships are stored as a graph.
-
-Example:
+Relationships are stored inside Neo4j.
 
 ```
 UserService
-      │
-      ├── PaymentService
-      │
-      ├── NotificationService
-      │
-      └── AuthService
+    │
+    ├── AuthService
+    ├── PaymentService
+    └── NotificationService
 ```
 
 ---
 
-## 4. AI Analysis
+### 4. AI Analysis
 
-When a Slack message is received:
+When a developer asks a question:
 
-1. Understand the question
-2. Search relevant repositories
+1. Understand intent
+2. Search repositories
 3. Traverse dependency graph
 4. Analyze Git history
-5. Generate an AI response
-
----
-
-# 🏗 Architecture
-
-```
-                    GitHub Webhook
-                           │
-                           ▼
-                   Repository Parser
-                           │
-                           ▼
-                Dependency Extractor
-                           │
-                           ▼
-                   Graph Construction
-                           │
-                 ┌─────────┴─────────┐
-                 ▼                   ▼
-            Graph Database      Search Index
-                 │                   │
-                 └─────────┬─────────┘
-                           ▼
-                      MCP Server
-                           │
-                           ▼
-                     Slack AI Agent
-                           │
-                           ▼
-                    Developer in Slack
-```
+5. Generate an architecture-aware answer
 
 ---
 
@@ -311,30 +182,10 @@ When a Slack message is received:
 - Express
 - GitHub Webhooks
 
-## Slack
-
-- Slack Bolt SDK
-- Slack AI Capabilities
-
 ## AI
 
-- OpenAI Responses API (or compatible LLM)
-
-## Search
-
-- Real-Time Search API
-
-## MCP
-
-Custom MCP Server exposing tools such as:
-
-- searchRepository()
-- findDependencies()
-- summarizePullRequest()
-- recommendReviewers()
-- endpointUsage()
-- architectureSearch()
-- listServices()
+- OpenAI Responses API
+- MCP Server
 
 ## Storage
 
@@ -342,104 +193,95 @@ Custom MCP Server exposing tools such as:
 - PostgreSQL
 - Redis
 
+## Integrations
+
+- GitHub
+- Slack
+
 ---
 
 # 📂 Project Structure
 
 ```
-archlens/
-
 apps/
-    dashboard/
-    slack-agent/
-
-packages/
-    parser/
-    graph/
-    ai/
-    github/
-    slack/
-    mcp-server/
-
-services/
-    webhook/
-    indexer/
-
-database/
-
-docs/
+├── api/
+│   ├── src/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   │   ├── github/
+│   │   │   ├── parser/
+│   │   │   ├── graph/
+│   │   │   ├── ai/
+│   │   │   └── slack/
+│   │   ├── mcp/
+│   │   └── db/
+│
+└── web/
+    ├── app/
+    ├── components/
+    └── lib/
 ```
 
 ---
 
-# 📈 Example Conversation
-
-**Developer**
-
-> @ArchLens Will removing PaymentService break anything?
-
-**ArchLens**
+# 🔄 Data Flow
 
 ```
-Risk Level: High
-
-Affected Services
-• BillingService
-• NotificationService
-• OrderService
-
-Affected APIs
-• /v1/payment
-• /v1/refund
-
-Affected Files
-• paymentClient.ts
-• billing.ts
-• orderProcessor.ts
-
-Recommended Reviewers
-• Alice
-• Bob
-
-Estimated Impact
-17 files
-5 services
-2 APIs
+GitHub
+   │
+   ▼
+Webhook
+   │
+   ▼
+Repository Indexer
+   │
+   ▼
+Parser
+   │
+   ▼
+Dependency Graph
+   │
+   ▼
+Neo4j + PostgreSQL
+   │
+   ▼
+MCP Server
+   │
+   ▼
+OpenAI
+   │
+   ▼
+Slack
 ```
 
 ---
 
-# 🚀 Roadmap
+# 🗺 Roadmap
 
-## MVP
+### MVP
 
-- Slack AI Agent
-- GitHub Integration
-- Dependency Analysis
-- PR Summaries
-- Endpoint Search
-- Reviewer Recommendation
+- ✅ Slack AI Assistant
+- ✅ GitHub Integration
+- ✅ Dependency Analysis
+- ✅ PR Summaries
+- ✅ Endpoint Search
+- ✅ Reviewer Recommendation
 
-## Phase 2
+### Future
 
 - Interactive Architecture Graph
 - Multi-repository Support
 - Documentation Search
-- Service Ownership Detection
-
-## Phase 3
-
-- Architectural Drift Detection
-- AI-generated RFC Reviews
+- Architecture Drift Detection
+- AI RFC Reviews
 - Architecture Health Score
-- Refactoring Suggestions
 
 ---
 
 # 🌟 Why ArchLens?
 
-ArchLens isn't another code chatbot.
+Unlike traditional code assistants, **ArchLens understands your system—not just your code.**
 
-It is an AI Software Architect that understands **how your entire system is connected**, helping developers answer architectural questions, review changes, estimate impact, and navigate large codebases—all without leaving Slack.
+It builds a living architectural knowledge graph of your repositories, allowing developers to understand dependencies, estimate the impact of changes, review pull requests, and navigate complex systems directly from Slack.
 
-By bringing architectural intelligence directly into everyday conversations, ArchLens reduces context switching, accelerates onboarding, and helps teams make safer engineering decisions.
+Spend less time searching and more time building.
