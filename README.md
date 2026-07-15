@@ -1,4 +1,4 @@
-# 🔎 ArchLens
+#  ArchLens
 
 > **Your AI Software Architect in Slack**
 >
@@ -6,7 +6,7 @@
 
 ---
 
-## 🚀 What is ArchLens?
+## What is ArchLens?
 
 Modern software systems span dozens of repositories, microservices, APIs, and documentation. Understanding how everything connects often requires searching through code, reading docs, and asking teammates.
 
@@ -24,19 +24,19 @@ ArchLens analyzes your repositories, dependency graph, API specifications, Git h
 
 ---
 
-# ✨ Features
+#  Features
 
-- 🔍 Dependency Analysis
-- 💥 Impact Analysis
-- 👨‍💻 AI PR Summaries
-- 👥 Reviewer Recommendation
-- 🔎 Endpoint Discovery
-- 🏗 Architecture Q&A
-- 📊 Interactive Dependency Graph
+-  Dependency Analysis
+-  Impact Analysis
+-  AI PR Summaries
+-  Reviewer Recommendation
+-  Endpoint Discovery
+-  Architecture Q&A
+-  Interactive Dependency Graph
 
 ---
 
-# 💬 Example Questions
+#  Example Questions
 
 ```
 What services depend on PaymentService?
@@ -58,7 +58,7 @@ Show all microservices.
 
 ---
 
-# ⚡ Example Response
+#  Example Response
 
 ```
 Risk Level: High
@@ -83,7 +83,6 @@ Recommended Reviewers
 
 ---
 
-# 🏗 System Architecture
 
 ```
                 GitHub
@@ -113,7 +112,7 @@ Recommended Reviewers
 
 ---
 
-# ⚙️ How It Works
+#  How It Works
 
 ### 1. Repository Indexing
 
@@ -167,7 +166,7 @@ When a developer asks a question:
 
 ---
 
-# 🛠 Tech Stack
+#  Tech Stack
 
 ## Frontend
 
@@ -200,31 +199,35 @@ When a developer asks a question:
 
 ---
 
-# 📂 Project Structure
+#  Project Structure
 
 ```
 apps/
 ├── api/
 │   ├── src/
 │   │   ├── routes/
-│   │   ├── services/
+│   │   ├── modules/
 │   │   │   ├── github/
 │   │   │   ├── parser/
 │   │   │   ├── graph/
 │   │   │   ├── ai/
-│   │   │   └── slack/
+│   │   │   ├── slack/
+│   │   │   └── analysis/
 │   │   ├── mcp/
-│   │   └── db/
+│   │   ├── db/
+│   │   ├── middleware/
+│   │   └── utils/
 │
 └── web/
     ├── app/
     ├── components/
+    ├── hooks/
     └── lib/
 ```
 
 ---
 
-# 🔄 Data Flow
+#  Data Flow
 
 ```
 GitHub
@@ -256,7 +259,6 @@ Slack
 
 ---
 
-# 🗺 Roadmap
 
 ### MVP
 
@@ -278,7 +280,7 @@ Slack
 
 ---
 
-# 🌟 Why ArchLens?
+#  Why ArchLens?
 
 Unlike traditional code assistants, **ArchLens understands your system—not just your code.**
 
