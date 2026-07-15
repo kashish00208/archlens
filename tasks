@@ -1,0 +1,37 @@
+Here's the practical build order to get from where you are to "people can ask questions in Slack and get answers":
+
+## Phase 2 — GitHub Webhook + Basic Indexing
+1. In your target repo, add a webhook pointing to `routes/webhook.ts`, subscribed to `push` and `pull_request` events
+2. In `services/github/`, write a function to fetch changed files' content via GitHub API (Octokit)
+3. In `services/parser/`, start dumb: just regex/AST-parse `import`/`require` statements to build a basic dependency list — don't over-engineer this initially
+4. In `services/graph/`, write functions to upsert nodes (files/services) and edges (dependencies) into Neo4j
+5. Test by pushing a commit and checking Neo4j Browser to confirm nodes/edges appear
+
+## Phase 3 — MCP Server (the tool layer)
+1. In `mcp/`, define 2-3 tools to start — don't build all 7 features at once:
+   - `get_dependents(serviceName)` → calls `services/graph`
+   - `get_impact(endpoint)` → calls `services/graph`
+2. Each tool should have a clear JSON schema (name, description, input params) — this is what the AI model uses to decide when to call it
+3. Test each tool function directly (unit test / manual call) before wiring to AI — isolate bugs early
+
+## Phase 4 — AI Layer
+1. In `services/ai/`, write the function that calls OpenAI Responses API, passing your MCP tools in the `tools` param
+2. System prompt should say something like: "You are an architecture assistant. Use the available tools to answer questions about service dependencies and impact analysis."
+3. Handle the response: check if the model wants to call a tool → execute it via `mcp/` → feed result back to the model → get final text answer
+4. Test with a hardcoded question in a script before connecting to Slack
+
+## Phase 5 — Wire It Together
+1. `controller/slackController.ts`: receive Slack event → extract question text → call `services/ai/` → get answer → call `services/slack/` to post it back
+2. `services/slack/`: format the response (use Slack Block Kit for the nice Risk Level / Affected Services layout) and POST to Slack's `chat.postMessage` API
+3. Test end-to-end: ask a real question in Slack, confirm it flows through and comes back
+
+## Phase 6 — Harden It
+1. Add Redis caching in `lib/` for repeated graph queries (avoid hammering Neo4j on common questions)
+2. Add error handling — what happens if OpenAI times out, if Neo4j query fails, if Slack event is malformed
+3. Add logging so you can debug what tool got called and why
+
+---
+
+**My honest suggestion on sequencing**: build Phase 1 and Phase 5's "hello world" version *together* first — get a message from Slack to trigger literally any hardcoded response. That proves your whole pipe works end-to-end with zero AI/graph complexity. Then layer in GitHub indexing, then MCP tools, then real AI reasoning. That way you always have something demoable, which matters a lot if you're using this as a portfolio/credibility piece.
+
+Want me to go deeper on any one phase — like the actual Slack Block Kit payload format, or how to structure the MCP tool schema for OpenAI to call correctly?
