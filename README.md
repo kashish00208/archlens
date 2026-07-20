@@ -1,289 +1,287 @@
-#  ArchLens
+## MCP Observatory
 
-> **Your AI Software Architect in Slack**
->
-> Ask questions about your architecture, dependencies, pull requests, APIs, and system design—all without leaving Slack.
+> **MCP Observatory** is an observability platform for Model Context Protocol (MCP) servers. It provides end-to-end tracing, debugging, replay, and performance analytics for every MCP tool call made by AI agents.
 
----
+Instead of asking:
 
-## What is ArchLens?
+> "Why did my agent fail?"
 
-Modern software systems span dozens of repositories, microservices, APIs, and documentation. Understanding how everything connects often requires searching through code, reading docs, and asking teammates.
+You can answer:
 
-**ArchLens** is an AI-powered architecture assistant that continuously analyzes your codebase and answers architectural questions directly in Slack.
-
-Instead of searching manually, simply ask:
-
-> *"Will removing this API break anything?"*
-
-or
-
-> *"Who should review this PR?"*
-
-ArchLens analyzes your repositories, dependency graph, API specifications, Git history, and documentation to provide contextual, architecture-aware answers.
+> "The GitHub MCP server timed out after 2.3 seconds, the Notion tool returned malformed JSON, the agent retried twice, and the final response degraded because context retrieval failed."
 
 ---
 
-#  Features
+# Problem
 
--  Dependency Analysis
--  Impact Analysis
--  AI PR Summaries
--  Reviewer Recommendation
--  Endpoint Discovery
--  Architecture Q&A
--  Interactive Dependency Graph
-
----
-
-#  Example Questions
+Today, when AI agents use MCP:
 
 ```
-What services depend on PaymentService?
-
-Will removing /v1/auth break anything?
-
-Summarize PR #284
-
-Who should review this PR?
-
-Where is /v1/payment used?
-
-Explain the authentication flow.
-
-Which services use Redis?
-
-Show all microservices.
-```
-
----
-
-#  Example Response
-
-```
-Risk Level: High
-
-Affected Services
-• BillingService
-• NotificationService
-• OrderService
-
-Affected APIs
-• /v1/payment
-• /v1/refund
-
-Breaking Changes
-• 5 services impacted
-• 17 files affected
-
-Recommended Reviewers
-• Alice
-• Bob
-```
-
----
-
-
-```
-                GitHub
-                   │
-                   ▼
-        Repository Indexer
-                   │
-                   ▼
-        Dependency Parser
-                   │
-                   ▼
-          Knowledge Graph
-      (Neo4j + PostgreSQL)
-                   │
-                   ▼
-             MCP Server
-                   │
-                   ▼
-          OpenAI Responses API
-                   │
-                   ▼
-          Slack AI Assistant
-                   │
-                   ▼
-              Developer
-```
-
----
-
-#  How It Works
-
-### 1. Repository Indexing
-
-ArchLens continuously indexes
-
-- Source code
-- Pull Requests
-- OpenAPI Specs
-- README files
-- Architecture Docs
-- Git History
-
----
-
-### 2. Dependency Extraction
-
-It automatically discovers
-
-- Imports
-- Service-to-service communication
-- API calls
-- Database usage
-- Queues
-- Package dependencies
-
----
-
-### 3. Knowledge Graph
-
-Relationships are stored inside Neo4j.
-
-```
-UserService
-    │
-    ├── AuthService
-    ├── PaymentService
-    └── NotificationService
-```
-
----
-
-### 4. AI Analysis
-
-When a developer asks a question:
-
-1. Understand intent
-2. Search repositories
-3. Traverse dependency graph
-4. Analyze Git history
-5. Generate an architecture-aware answer
-
----
-
-#  Tech Stack
-
-## Frontend
-
-- Next.js
-- TypeScript
-- Tailwind CSS
-- React Flow
-
-## Backend
-
-- Node.js
-- Express
-- GitHub Webhooks
-
-## AI
-
-- OpenAI Responses API
-- MCP Server
-
-## Storage
-
-- Neo4j
-- PostgreSQL
-- Redis
-
-## Integrations
-
-- GitHub
-- Slack
-
----
-
-#  Project Structure
-
-```
-apps/
-├── api/
-│   ├── src/
-│   │   ├── routes/
-│   │   ├── modules/
-│   │   │   ├── github/
-│   │   │   ├── parser/
-│   │   │   ├── graph/
-│   │   │   ├── ai/
-│   │   │   ├── slack/
-│   │   │   └── analysis/
-│   │   ├── mcp/
-│   │   ├── db/
-│   │   ├── middleware/
-│   │   └── utils/
-│
-└── web/
-    ├── app/
-    ├── components/
-    ├── hooks/
-    └── lib/
-```
-
----
-
-#  Data Flow
-
-```
-GitHub
+Agent
    │
-   ▼
-Webhook
-   │
-   ▼
-Repository Indexer
-   │
-   ▼
-Parser
-   │
-   ▼
-Dependency Graph
-   │
-   ▼
-Neo4j + PostgreSQL
-   │
-   ▼
-MCP Server
-   │
-   ▼
-OpenAI
-   │
-   ▼
+GitHub Tool
+Notion Tool
+Slack Tool
+Database Tool
+Filesystem Tool
+```
+
+Developers often lack visibility into:
+
+* Which tool was called?
+* How long did it take?
+* Which arguments were passed?
+* Which tool failed?
+* Was there a retry?
+* Which step made the agent slow?
+* Which tool consumes the most tokens?
+* Which server is unhealthy?
+
+MCP Observatory answers those questions.
+
+---
+
+# Architecture
+
+```text
+                 AI Agent
+                     │
+                     ▼
+          MCP Observatory SDK
+                     │
+        ┌────────────┼────────────┐
+        ▼            ▼            ▼
+ GitHub MCP     Notion MCP    Slack MCP
+        │            │            │
+        └────────────┼────────────┘
+                     ▼
+         OpenTelemetry Spans
+                     ▼
+                SigNoz Backend
+                     ▼
+        Observatory Dashboard
+```
+
+The SDK wraps MCP client calls and emits OpenTelemetry spans.
+
+---
+
+# Features
+
+### 1. End-to-End Tracing
+
+Visualize every request:
+
+```
+User Question
+     │
+Planner
+     │
+GitHub Tool
+     │
+Filesystem Tool
+     │
+Notion Tool
+     │
+LLM
+     │
+Answer
+```
+
+Each step is a trace.
+
+---
+
+### 2. Tool Performance Dashboard
+
+Show metrics like:
+
+* Average latency
+* P95 latency
+* Error rate
+* Timeout rate
+* Retry count
+* Calls per minute
+* Slowest tools
+
+---
+
+### 3. Tool Replay
+
+Click a trace and inspect:
+
+* Tool name
+* Arguments (with sensitive data masked)
+* Response
+* Duration
+* Errors
+
+Replay the execution to reproduce issues.
+
+---
+
+### 4. Live Tool Timeline
+
+```
+10:00 GitHub Search
+10:00 Filesystem Read
+10:01 PostgreSQL Query
+10:02 Notion Search
+10:02 Slack Send
+```
+
+Like a distributed trace for MCP.
+
+---
+
+### 5. Failure Heatmap
+
+```
+GitHub        ██ 2%
+Filesystem    ████████ 18%
+Notion        ███ 4%
+Slack         █ 1%
+```
+
+Identify unreliable tools at a glance.
+
+---
+
+### 6. AI Tool Cost
+
+Track:
+
+* Tokens
+* Latency
+* Cost
+* Calls
+* Average execution time
+
+Per tool.
+
+---
+
+### 7. Conversation Trace
+
+Follow a user request:
+
+```
 Slack
+
+↓
+
+Planner
+
+↓
+
+GitHub
+
+↓
+
+Database
+
+↓
+
+Filesystem
+
+↓
+
+OpenAI
+
+↓
+
+Slack Reply
 ```
 
 ---
 
+### 8. Tool Dependency Graph
 
-### MVP
+```
+Planner
+   │
+   ├── GitHub
+   ├── Notion
+   ├── PostgreSQL
+   ├── Filesystem
+   └── Slack
+```
 
-- ✅ Slack AI Assistant
-- ✅ GitHub Integration
-- ✅ Dependency Analysis
-- ✅ PR Summaries
-- ✅ Endpoint Search
-- ✅ Reviewer Recommendation
+Highlight:
 
-### Future
-
-- Interactive Architecture Graph
-- Multi-repository Support
-- Documentation Search
-- Architecture Drift Detection
-- AI RFC Reviews
-- Architecture Health Score
+* Slow nodes
+* Failed nodes
+* Healthy nodes
 
 ---
 
-#  Why ArchLens?
+### 9. Anomaly Detection
 
-Unlike traditional code assistants, **ArchLens understands your system—not just your code.**
+Examples:
 
-It builds a living architectural knowledge graph of your repositories, allowing developers to understand dependencies, estimate the impact of changes, review pull requests, and navigate complex systems directly from Slack.
+* Tool latency spikes
+* Error rate increases
+* Sudden token usage growth
+* Retry storms
 
-Spend less time searching and more time building.
+Generate alerts in SigNoz.
+
+---
+
+### 10. Session Replay
+
+Replay the entire agent execution with timing, tool sequence, and outcomes.
+
+---
+
+# Tech Stack
+
+* **SigNoz** for traces, logs, metrics, and dashboards
+* **OpenTelemetry** for instrumentation
+* **TypeScript**
+* **Node.js**
+* **MCP SDK**
+* **Next.js** for the dashboard
+* **Redis** (optional) for caching
+* **PostgreSQL** (optional) for historical metadata
+
+---
+
+# Demo
+
+1. Ask an AI agent:
+
+   > "Summarize PR #245"
+
+2. The agent calls:
+
+   * GitHub MCP
+   * Filesystem MCP
+   * Documentation MCP
+
+3. Open SigNoz:
+
+   * Watch the trace build live.
+   * Inspect each span.
+
+4. Simulate a slow GitHub MCP server.
+
+5. SigNoz highlights the latency spike.
+
+6. Drill into the trace to see:
+
+   * Which tool slowed the request.
+   * How retries affected latency.
+   * Which downstream calls were impacted.
+
+This demonstrates observability in a concrete, easy-to-follow way.
+
+## Stretch Goals
+
+If you have extra time, consider adding:
+
+* **Automatic root-cause analysis**, where an AI summarizes why a trace failed based on telemetry.
+* **MCP Health Score**, combining latency, availability, and error rates into a single metric.
+* **Open-source SDK**, so any MCP server can emit telemetry with minimal setup.
+
+These additions would make the project more useful beyond the hackathon while reinforcing the AI observability theme.
