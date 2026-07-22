@@ -1,287 +1,257 @@
-## MCP Observatory
+# AgentScope
 
-> **MCP Observatory** is an observability platform for Model Context Protocol (MCP) servers. It provides end-to-end tracing, debugging, replay, and performance analytics for every MCP tool call made by AI agents.
+## Overview
 
-Instead of asking:
+AgentScope is a debugging and observability platform for AI agents.
 
-> "Why did my agent fail?"
+The goal is not to build another AI agent. The goal is to help developers understand how an AI agent works internally, why it made a decision, where it failed, and how it can be improved.
 
-You can answer:
-
-> "The GitHub MCP server timed out after 2.3 seconds, the Notion tool returned malformed JSON, the agent retried twice, and the final response degraded because context retrieval failed."
+A simple demo agent generates execution data. AgentScope captures that data and provides tools to inspect, replay, compare, and analyze every execution.
 
 ---
 
-# Problem
+## Problem
 
-Today, when AI agents use MCP:
+When an AI agent produces an incorrect answer or fails, developers often have to inspect logs, prompts, and traces manually.
 
-```
-Agent
-   │
-GitHub Tool
-Notion Tool
-Slack Tool
-Database Tool
-Filesystem Tool
-```
+Questions like these are difficult to answer quickly:
 
-Developers often lack visibility into:
+- Why did the agent choose this tool?
+- Which step caused the failure?
+- Why did latency increase?
+- Why did token usage suddenly spike?
+- What changed between two successful and failed runs?
 
-* Which tool was called?
-* How long did it take?
-* Which arguments were passed?
-* Which tool failed?
-* Was there a retry?
-* Which step made the agent slow?
-* Which tool consumes the most tokens?
-* Which server is unhealthy?
-
-MCP Observatory answers those questions.
+Traditional observability tools provide traces and metrics, but they do not explain AI-specific behavior.
 
 ---
 
-# Architecture
+## Solution
 
-```text
-                 AI Agent
-                     │
-                     ▼
-          MCP Observatory SDK
-                     │
-        ┌────────────┼────────────┐
-        ▼            ▼            ▼
- GitHub MCP     Notion MCP    Slack MCP
-        │            │            │
-        └────────────┼────────────┘
-                     ▼
-         OpenTelemetry Spans
-                     ▼
-                SigNoz Backend
-                     ▼
-        Observatory Dashboard
-```
+AgentScope records every step of an AI agent execution and presents it as an interactive debugging session.
 
-The SDK wraps MCP client calls and emits OpenTelemetry spans.
+Instead of only viewing logs, developers can replay the execution, inspect every decision, compare runs, and receive AI-generated explanations for failures.
+
+The demo agent exists only to generate realistic workflows for debugging.
 
 ---
 
 # Features
 
-### 1. End-to-End Tracing
+## 1. Execution Replay
 
-Visualize every request:
+Replay an agent execution from start to finish.
 
-```
-User Question
-     │
+For every step, display:
+
+- Prompt
+- LLM response
+- Tool called
+- Tool input
+- Tool output
+- Latency
+- Token usage
+- Cost
+- Errors
+
+---
+
+## 2. Workflow Visualization
+
+Visualize the complete execution graph.
+
+Example:
+
+User
+
+↓
+
 Planner
-     │
-GitHub Tool
-     │
-Filesystem Tool
-     │
-Notion Tool
-     │
+
+↓
+
+Retriever
+
+↓
+
 LLM
-     │
-Answer
-```
-
-Each step is a trace.
-
----
-
-### 2. Tool Performance Dashboard
-
-Show metrics like:
-
-* Average latency
-* P95 latency
-* Error rate
-* Timeout rate
-* Retry count
-* Calls per minute
-* Slowest tools
-
----
-
-### 3. Tool Replay
-
-Click a trace and inspect:
-
-* Tool name
-* Arguments (with sensitive data masked)
-* Response
-* Duration
-* Errors
-
-Replay the execution to reproduce issues.
-
----
-
-### 4. Live Tool Timeline
-
-```
-10:00 GitHub Search
-10:00 Filesystem Read
-10:01 PostgreSQL Query
-10:02 Notion Search
-10:02 Slack Send
-```
-
-Like a distributed trace for MCP.
-
----
-
-### 5. Failure Heatmap
-
-```
-GitHub        ██ 2%
-Filesystem    ████████ 18%
-Notion        ███ 4%
-Slack         █ 1%
-```
-
-Identify unreliable tools at a glance.
-
----
-
-### 6. AI Tool Cost
-
-Track:
-
-* Tokens
-* Latency
-* Cost
-* Calls
-* Average execution time
-
-Per tool.
-
----
-
-### 7. Conversation Trace
-
-Follow a user request:
-
-```
-Slack
 
 ↓
 
-Planner
+Weather API
 
 ↓
 
-GitHub
+Final Response
 
-↓
-
-Database
-
-↓
-
-Filesystem
-
-↓
-
-OpenAI
-
-↓
-
-Slack Reply
-```
+Developers can inspect every node in the workflow.
 
 ---
 
-### 8. Tool Dependency Graph
+## 3. Execution Timeline
 
-```
-Planner
-   │
-   ├── GitHub
-   ├── Notion
-   ├── PostgreSQL
-   ├── Filesystem
-   └── Slack
-```
+Show the exact order in which events occurred.
 
-Highlight:
+Example:
 
-* Slow nodes
-* Failed nodes
-* Healthy nodes
+09:42:01 Prompt received
+
+09:42:02 Planner started
+
+09:42:03 Weather API called
+
+09:42:05 Retry
+
+09:42:08 Final response generated
 
 ---
 
-### 9. Anomaly Detection
+## 4. AI Health Report
 
-Examples:
+Generate a summary after every execution.
 
-* Tool latency spikes
-* Error rate increases
-* Sudden token usage growth
-* Retry storms
+Example:
 
-Generate alerts in SigNoz.
+Execution Score: 84/100
+
+Issues:
+- Two retries
+- Weather API timeout
+- High token usage
+
+Recommendations:
+- Cache weather responses
+- Reduce retrieved context
+- Execute tool calls in parallel
 
 ---
 
-### 10. Session Replay
+## 5. Compare Executions
 
-Replay the entire agent execution with timing, tool sequence, and outcomes.
+Compare two runs of the same workflow.
+
+Highlight differences in:
+
+- Prompt
+- Model
+- Tool calls
+- Token usage
+- Cost
+- Latency
+- Final response
+
+The platform explains what changed between executions.
+
+---
+
+## 6. Root Cause Analysis
+
+Instead of only showing traces, generate an explanation.
+
+Example:
+
+The Weather API timed out twice.
+
+The planner retried because weather information was required.
+
+The retries increased latency by 5.2 seconds.
+
+---
+
+## 7. SigNoz Integration
+
+SigNoz collects:
+
+- Traces
+- Metrics
+- Logs
+
+AgentScope enriches this telemetry with AI-specific information such as:
+
+- Prompt history
+- Tool execution
+- Token usage
+- Model responses
+- AI-generated analysis
+
+---
+
+# Architecture
+
+                  Demo AI Agent
+                         │
+                         │
+                  OpenTelemetry
+                         │
+                         ▼
+                     SigNoz
+                         │
+                         ▼
+                   AgentScope API
+                         │
+        ┌────────────────┴───────────────┐
+        │                                │
+        ▼                                ▼
+Execution Store                 AI Analysis Engine
+        │                                │
+        └──────────────┬─────────────────┘
+                       ▼
+                  React Dashboard
 
 ---
 
 # Tech Stack
 
-* **SigNoz** for traces, logs, metrics, and dashboards
-* **OpenTelemetry** for instrumentation
-* **TypeScript**
-* **Node.js**
-* **MCP SDK**
-* **Next.js** for the dashboard
-* **Redis** (optional) for caching
-* **PostgreSQL** (optional) for historical metadata
+Frontend
+
+- React
+- TypeScript
+- React Flow
+- Tailwind CSS
+
+Backend
+
+- Node.js
+- Express or NestJS
+- TypeScript
+
+AI
+
+- OpenAI API
+- LangGraph (optional)
+
+Observability
+
+- SigNoz
+- OpenTelemetry
+
+Database
+
+- PostgreSQL
 
 ---
 
-# Demo
+# Demo Flow
 
-1. Ask an AI agent:
+1. User submits a request.
+2. Demo agent executes a workflow.
+3. OpenTelemetry sends traces to SigNoz.
+4. AgentScope reads telemetry.
+5. AgentScope reconstructs the execution.
+6. The dashboard displays:
+   - Workflow graph
+   - Timeline
+   - Replay
+   - Metrics
+   - Root cause analysis
+   - AI Health Report
 
-   > "Summarize PR #245"
+---
 
-2. The agent calls:
+# Why This Project
 
-   * GitHub MCP
-   * Filesystem MCP
-   * Documentation MCP
+Current observability tools explain system behavior.
 
-3. Open SigNoz:
+AgentScope explains agent behavior.
 
-   * Watch the trace build live.
-   * Inspect each span.
-
-4. Simulate a slow GitHub MCP server.
-
-5. SigNoz highlights the latency spike.
-
-6. Drill into the trace to see:
-
-   * Which tool slowed the request.
-   * How retries affected latency.
-   * Which downstream calls were impacted.
-
-This demonstrates observability in a concrete, easy-to-follow way.
-
-## Stretch Goals
-
-If you have extra time, consider adding:
-
-* **Automatic root-cause analysis**, where an AI summarizes why a trace failed based on telemetry.
-* **MCP Health Score**, combining latency, availability, and error rates into a single metric.
-* **Open-source SDK**, so any MCP server can emit telemetry with minimal setup.
-
-These additions would make the project more useful beyond the hackathon while reinforcing the AI observability theme.
+It helps developers understand not only what happened during execution, but also why it happened and how to improve it.
